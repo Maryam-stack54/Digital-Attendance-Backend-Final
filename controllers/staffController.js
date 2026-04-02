@@ -78,6 +78,7 @@ const login = async (req, res)=>{
         return res.status(400).json({
             success: false,
             message: "This staff does not exist, kindly register"
+            
         })
        }
        //compare password

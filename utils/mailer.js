@@ -15,6 +15,17 @@ const transporter = nodemailer.createTransport({
     }
 })
 
+//  GENERAL FUNCTION
+const sendEmail = async ({ to, subject, html }) => {
+    await transporter.sendMail({
+      from: `"Digital Attendance System" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html
+    })
+  }
+  
+
 //function to send the reset email
 const sendResetEmail = async(staffEmail, resetLink)=>{
     try {
@@ -52,4 +63,4 @@ const sendResetEmail = async(staffEmail, resetLink)=>{
     }
 }
 
-module.exports = sendResetEmail
+module.exports = {sendEmail, sendResetEmail}

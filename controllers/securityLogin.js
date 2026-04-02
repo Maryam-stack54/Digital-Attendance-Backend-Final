@@ -1,4 +1,4 @@
- const bcrypt = require("bcryptjs")
+const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const staffModel = require("../models/staffModel.js")
 
@@ -61,9 +61,9 @@ const securityLogin = async(req, res)=>{
                 role: security.role
             },
             message: "Login Successful",
-        })
+        }) 
         
-    } catch (error) {
+    } catch (error) { 
         console.error("Security login error:", error)
         res.status(500).json({
             success: false,

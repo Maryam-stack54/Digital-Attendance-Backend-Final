@@ -1,4 +1,4 @@
- const express = require("express")
+const express = require("express")
 
 const mongoose = require("mongoose")
 
@@ -25,10 +25,8 @@ const staffSchema = new mongoose.Schema({
         required:  function () {
             return this.role !== "security"
         },
-        unique: true
-    },
-
-
+        sparse: true
+    }, 
 
     //login credentials for All users
     password:{
@@ -39,10 +37,10 @@ const staffSchema = new mongoose.Schema({
     staffId:{
         type: String,
         required: true,
-        unique: true,
         required: function () {
             return this.role !== "security"
-        },
+        }
+    },
 
     securityId: {
         type: String,
@@ -50,14 +48,14 @@ const staffSchema = new mongoose.Schema({
         required: function (){
             return this.role == "security"
         }
-    }
-    }, 
+    },
+    
 
 
     //optional info for staff and HR
     department: {
         type: String,
-    },
+    }, 
     unit: { 
         type: String
     },

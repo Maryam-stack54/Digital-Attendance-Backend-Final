@@ -6,14 +6,35 @@ const getAttendance = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
+    
+    const today = new Date();
+
+    const startOfDay = new Date(today);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(today);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    
     const records = await attendanceModel
-      .find()
+      .find({
+        timeIn: {
+          $gte: startOfDay,
+          $lte: endOfDay,
+        },
+      })
       .populate("staff", "staffId firstName lastName")
       .sort({ timeIn: -1 })
       .skip(skip)
       .limit(limit);
 
-    const total = await attendanceModel.countDocuments();
+    
+    const total = await attendanceModel.countDocuments({
+      timeIn: {
+        $gte: startOfDay,
+        $lte: endOfDay,
+      },
+    });
 
     const result = records
       .map((record) => {
@@ -21,11 +42,20 @@ const getAttendance = async (req, res) => {
 
         const time = new Date(record.timeIn);
 
-        const cutoff = new Date(time);
-        cutoff.setHours(9, 0, 0, 0);
+       // force Nigeria local time
+      const nigeriaTime = new Date(
+      time.toLocaleString("en-US", { timeZone: "Africa/Lagos" })
+);
 
-        const status = time <= cutoff ? "Early" : "Late";
+     const hours = nigeriaTime.getHours();
+     const minutes = nigeriaTime.getMinutes();
 
+     const totalMinutes = hours * 60 + minutes;
+
+    // 9:00 AM = 540 minutes
+     const status = totalMinutes <= 540 ? "Early" : "Late";
+
+     
         return {
           employeeId: record.staff.staffId,
           employeeName: `${record.staff.firstName} ${record.staff.lastName}`,

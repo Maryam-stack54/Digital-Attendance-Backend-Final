@@ -8,7 +8,7 @@ const attendanceSchema = new mongoose.Schema({
         },
     timeIn: {
         type: Date,
-        default: Date.now()
+        default: Date.now
     }, 
 
     qrTimeStamp: {

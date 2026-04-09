@@ -6,16 +6,17 @@ const getAttendance = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
 
-    
-    const today = new Date();
+    // Get today's range in Nigeria time safely
+    const now = new Date();
 
-    const startOfDay = new Date(today);
+    const startOfDay = new Date(
+      new Date().toLocaleString("en-US", { timeZone: "Africa/Lagos" })
+    );
     startOfDay.setHours(0, 0, 0, 0);
 
-    const endOfDay = new Date(today);
+    const endOfDay = new Date(startOfDay);
     endOfDay.setHours(23, 59, 59, 999);
 
-    
     const records = await attendanceModel
       .find({
         timeIn: {
@@ -28,7 +29,6 @@ const getAttendance = async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    
     const total = await attendanceModel.countDocuments({
       timeIn: {
         $gte: startOfDay,
@@ -40,27 +40,33 @@ const getAttendance = async (req, res) => {
       .map((record) => {
         if (!record.staff) return null;
 
-        const time = new Date(record.timeIn);
+        // convert each record to Nigeria time
+        const localTime = new Date(
+          new Date(record.timeIn).toLocaleString("en-US", {
+            timeZone: "Africa/Lagos",
+          })
+        );
 
-       // force Nigeria local time
-      const nigeriaTime = new Date(
-      time.toLocaleString("en-US", { timeZone: "Africa/Lagos" })
-);
+        const hours = localTime.getHours();
+        const minutes = localTime.getMinutes();
 
-     const hours = nigeriaTime.getHours();
-     const minutes = nigeriaTime.getMinutes();
+        const totalMinutes = hours * 60 + minutes;
 
-     const totalMinutes = hours * 60 + minutes;
+        // 9:00 AM rule
+        const status = totalMinutes <= 540 ? "Early" : "Late";
 
-    // 9:00 AM = 540 minutes
-     const status = totalMinutes <= 540 ? "Early" : "Late";
-
-     
         return {
           employeeId: record.staff.staffId,
           employeeName: `${record.staff.firstName} ${record.staff.lastName}`,
-          timeIn: record.timeIn,
-          status: status,
+
+          // CLEAN OUTPUT FOR FRONTEND (TIME ONLY)
+          timeIn: localTime.toLocaleTimeString("en-NG", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          }),
+
+          status,
         };
       })
       .filter(Boolean);

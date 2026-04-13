@@ -355,7 +355,7 @@ const searchStaffs = async(req, res)=>{
         { firstName: regex },
         { lastName: regex }
       ]
-    }).select("staffId firstName lastName department unit") // only send needed fields
+    }).select("staffId firstName lastName department unit") 
 
     return res.status(200).json({
       success: true,

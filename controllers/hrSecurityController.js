@@ -36,7 +36,8 @@ const createSecurity = async (req, res) => {
     const security = await staffModel.create({
       securityId,
       password: hashedPassword,
-      role: "security"
+      role: "security",
+      changePassword: true
     });
 
     res.status(201).json({
@@ -47,7 +48,7 @@ const createSecurity = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Create security error:", error.message); // minimal log
+    console.error("Create security error:", error.message); 
     res.status(500).json({
       success: false,
       message: "Could not create security"

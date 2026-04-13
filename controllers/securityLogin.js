@@ -42,7 +42,7 @@ const securityLogin = async(req, res)=>{
         const token = jwt.sign(
             {id: security._id, role: security.role},  
             process.env.JWT_SECRET,
-            {expiresIn: "1hr"}  
+            { expiresIn: "1hr" }  
           )
   
           res.

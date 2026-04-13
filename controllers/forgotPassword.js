@@ -22,7 +22,7 @@ const forgotPassword = async (req, res) => {
       });
     }
 
-    // 1. generate token
+    // generate token
     const token = crypto.randomBytes(32).toString("hex");
 
     // 2. save token + expiry (IMPORTANT FIX)
@@ -33,10 +33,10 @@ const forgotPassword = async (req, res) => {
 
     console.log("TOKEN SAVED:", token);
 
-    // 3. reset link
+    // reset link
     const resetLink = `http://localhost:5173/resetPassword/${token}`;
 
-    // 4. send email
+    // send email
     await sendResetEmail(staff.email, resetLink);
 
     return res.status(200).json({

@@ -2,66 +2,73 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const staffModel = require("../models/staffModel.js")
 
-const changeSecurityPassword = async(req,res)=>{
-    try {
-        const {securityId, temporaryPassword, newPassword} = req.body
+const changeSecurityPassword = async (req, res) => {
+  try {
+    const { securityId, temporaryPassword, newPassword } = req.body;
 
-       if(!securityId || !temporaryPassword || !newPassword){
-         return res.status(400).json({
-            success: false,
-            message: "Security ID, new password and temporary Password are required"
-        })
+    if (!securityId || !temporaryPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required"
+      });
     }
 
-      //find the security user
-       const security = await staffModel.findOne({securityId, role: "security"})
-       if(!security){
-         return res.status(404).json({
-            success: false,
-            message: "Security not found"
-        })
-    } 
-    //Verify temporary password
-    const isMatch = await bcrypt.compare(temporaryPassword, security.password)
-    if(!isMatch){
+    // find user
+    const security = await staffModel.findOne({
+      securityId,
+      role: "security"
+    });
+
+    if (!security) {
+      return res.status(404).json({
+        success: false,
+        message: "Security not found"
+      });
+    }
+
+    // ❗ FIRST check: already changed password?
+    if (!security.changePassword) {
+      return res.status(403).json({
+        success: false,
+        message: "Password already changed. Please login normally."
+      });
+    }
+
+    // verify temporary password
+    const isMatch = await bcrypt.compare(
+      temporaryPassword,
+      security.password
+    );
+
+    if (!isMatch) {
       return res.status(401).json({
         success: false,
-        message: "Temporary password is required"
-      })
+        message: "Invalid temporary password"
+      });
     }
 
-      //Only allow change password if its the security first login
-      if(!security.changePassword){
-        return res.status(404).json({
-          success: false,
-          message: "Password change not allowed"
-        })
-    }
+    // hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-      //hash the new password
-      const salt = await bcrypt.genSalt(10)
-      const hashedPassword = await bcrypt.hash(newPassword, salt)
+    // update
+    security.password = hashedPassword;
+    security.changePassword = false;
 
-      //update password
-      security.password = hashedPassword
-      security.changePassword = false
+    await security.save();
 
-      await security.save()
+    return res.status(200).json({
+      success: true,
+      message: "Password changed successfully"
+    });
 
-      return res.status(200).json({
-        success: true,
-        message: "Password changed successfully"
-    })
-
-    } catch (error) {
-        console.error("Change password error: ", error)
-        return res.status(500).json({
-            success: false,
-            message: "Internal server error"
-        })
-    }
-}
-
+  } catch (error) {
+    console.error("Change password error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+};
 
 
 module.exports = changeSecurityPassword

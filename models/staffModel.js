@@ -62,8 +62,8 @@ const staffSchema = new mongoose.Schema({
 
 
     //Role Based Access
-    role: {
-        type: String,
+    role: { 
+        type: String, 
         enum:["staff", "hr", "security"],
         default: "staff"
       },

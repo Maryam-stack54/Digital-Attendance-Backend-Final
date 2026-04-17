@@ -24,7 +24,7 @@ const port = process.env.PORT || 5000
 
 //cors connection
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin: "https://digital-attendance-now-869u.onrender.com",
     credentials: true
   }));   
   

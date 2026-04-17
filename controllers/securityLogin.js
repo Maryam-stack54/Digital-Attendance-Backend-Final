@@ -46,7 +46,7 @@ const securityLogin = async(req, res)=>{
           )
   
           res.
-             cookie("token", token,{
+            cookie("token", token,{
              maxAge: 1000* 60* 60,
              secure: false,
             })

@@ -11,4 +11,4 @@ router.post("/mailToMultipleStaffs", authentication, sendMailToMultiple)
 router.post("/personalizedMail", authentication, sendMailToAllPersonalized)
 router.get("/staff", authentication,  getAllStaff)
 
-module.exports = router 
+module.exports = router    

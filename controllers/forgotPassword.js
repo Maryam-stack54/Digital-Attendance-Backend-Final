@@ -34,7 +34,7 @@ const forgotPassword = async (req, res) => {
     console.log("TOKEN SAVED:", token);
 
     // reset link
-    const resetLink = `http://localhost:5173/resetPassword/${token}`;
+    const resetLink = `https://digital-attendance-now-869u.onrender.com/resetPassword/${token}`;
 
     // send email
     await sendResetEmail(staff.email, resetLink);

@@ -21,4 +21,12 @@ router.put("/resetPassword/:token", resetPassword)
 
 router.post("/googleLogin", googleLogin)
 
+router.get("/test-cookie", (req, res) => {
+  res.json({
+    cookies: req.cookies || {},
+    headerCookie: req.headers.cookie || null,
+    message: "cookie test working"
+  });
+});
+
 module.exports = router

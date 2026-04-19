@@ -21,7 +21,11 @@ const cookieParser = require("cookie-parser")
 
 const app = express() 
 app.set("trust proxy", 1)
-const port = process.env.PORT || 5000
+
+
+const port = process.env.PORT 
+
+console.log("ENV PORT:", process.env.PORT);
 
 //cors connection
 app.use(cors({
@@ -54,7 +58,7 @@ mongoose.connect(process.env.MONGO_URI)
 
 
 
-app.listen(port, ()=>{
-    console.log("server is running in port 5000")
-})
 
+app.listen(port, "0.0.0.0", () => {
+    console.log(`Server running on port ${port}`);
+});

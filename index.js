@@ -20,15 +20,18 @@ const cookieParser = require("cookie-parser")
 
 
 const app = express() 
+app.set("trust proxy", 1)
 const port = process.env.PORT || 5000
 
 //cors connection
 app.use(cors({
   origin: "https://digital-attendance-now-869u.onrender.com",
-    credentials: true
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   }));   
   
-
+app.options("*", cors())
 app.use(express.json())
 app.use(cookieParser())
 

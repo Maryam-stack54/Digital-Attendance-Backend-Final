@@ -22,7 +22,7 @@ router.get("/earlyArrivals", authentication, getEarlyArrivals)
 router.get("/lateArrivals", authentication, getLateArrivals)
 router.get("/attendanceRate", authentication, getAttendanceRate)
 router.get("/weeklyAttendance",authentication, getWeeklyAttendance)
-router.get("/recentClockIns", authentication, authentication, getRecentClockIns)
+router.get("/recentClockIns", authentication, getRecentClockIns)
 router.get("/absentToday", authentication,  getAbsentToday)
 router.get("/searchStaffs", authentication, searchStaffs)
 
